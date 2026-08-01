@@ -31,3 +31,16 @@
 .animate-pulse-green {
   animation: pulse-green 2s ease-in-out infinite;
 }
+
+@keyframes map-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(229, 62, 62, 0);
+  }
+}
+
+.map-node-alert {
+  animation: map-pulse 2s ease-in-out infinite;
+}
