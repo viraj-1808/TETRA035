@@ -53,6 +53,48 @@ export default function App() {
     return () => clearInterval(clockInterval);
   }, []);
 
+  // Backend Connection Effect
+  // Backend Connection Effect
+  useEffect(() => {
+    const fetchAlerts = () => {
+      // 1. Updated URL to match your FastAPI /api/events endpoint
+      fetch('http://127.0.0.1:8000/api/events') 
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Backend data received:', data);
+          
+          // 2. FastAPI wraps the alerts inside a "data" property
+          // Make sure the request was successful and data exists
+          if (data.status === "success" && Array.isArray(data.data)) {
+             setAlerts(data.data); // Inject the database alerts into the UI
+          } else {
+             console.error("Data format mismatch. Expected a 'data' array, got:", data);
+          }
+          
+          setLastUpdated(new Date().toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true
+          }));
+        })
+        .catch(error => {
+          console.error('There was a problem connecting to the backend:', error);
+        });
+    };
+
+    fetchAlerts();
+
+    // Optional: Auto-refresh every 5 seconds
+    // const pollInterval = setInterval(fetchAlerts, 5000);
+    // return () => clearInterval(pollInterval);
+  }, []);
+
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
     localStorage.setItem("farm-guard-lang", newLang);
