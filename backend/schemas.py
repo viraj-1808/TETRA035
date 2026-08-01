@@ -56,6 +56,8 @@ class Alert(BaseModel):
     threat_level: str
     reasoning: str
     image_path: Optional[str] = None
+    threat_score: int                   # <-- NEW
+    animal_type: Optional[str] = None   # <-- NEW
 
 class APIResponse(BaseModel):
     status: str

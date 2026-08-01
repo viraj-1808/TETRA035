@@ -23,6 +23,8 @@ const MOCK_ALERTS = [
     threat_level: "CRITICAL",
     reasoning: "Large cow detected moving close to the center crop boundary.",
     image_path: "https://via.placeholder.com/640x480.png?text=Smart+Farm+Guard:+Cow+Spotted",
+    threat_score: 85,
+    animal_type: "cow"
   },
   {
     alert_id: "8c0cea3c-2a6c-3abc-8acc-1a0c6a2cba5c",
@@ -30,6 +32,8 @@ const MOCK_ALERTS = [
     threat_level: "LOW",
     reasoning: "Small dog detected near outer edge fence line.",
     image_path: "https://via.placeholder.com/640x480.png?text=Smart+Farm+Guard:+Dog+Spotted",
+    threat_score: 35,
+    animal_type: "dog"
   },
 ];
 
@@ -54,10 +58,8 @@ export default function App() {
   }, []);
 
   // Backend Connection Effect
-  // Backend Connection Effect
   useEffect(() => {
     const fetchAlerts = () => {
-      // 1. Updated URL to match your FastAPI /api/events endpoint
       fetch('http://127.0.0.1:8000/api/events') 
         .then(response => {
           if (!response.ok) {
@@ -68,10 +70,8 @@ export default function App() {
         .then(data => {
           console.log('Backend data received:', data);
           
-          // 2. FastAPI wraps the alerts inside a "data" property
-          // Make sure the request was successful and data exists
           if (data.status === "success" && Array.isArray(data.data)) {
-             setAlerts(data.data); // Inject the database alerts into the UI
+             setAlerts(data.data); 
           } else {
              console.error("Data format mismatch. Expected a 'data' array, got:", data);
           }
@@ -90,9 +90,8 @@ export default function App() {
 
     fetchAlerts();
 
-    // Optional: Auto-refresh every 5 seconds
-    // const pollInterval = setInterval(fetchAlerts, 5000);
-    // return () => clearInterval(pollInterval);
+    const pollInterval = setInterval(fetchAlerts, 5000);
+    return () => clearInterval(pollInterval);
   }, []);
 
   const handleLanguageChange = (e) => {
@@ -154,10 +153,16 @@ export default function App() {
     return "bg-[#9bf09d]/20 text-[#5DB85D] border border-[#9bf09d]/50";
   };
 
+  // 👇 Dynamic Threat Score Logic
   const getThreatScore = () => {
-    if (threatLevel === "CRITICAL") return { score: 85, label: t("critical"), color: "text-[#FF6B6B]" };
-    if (threatLevel === "LOW") return { score: 35, label: t("low"), color: "text-[#F6C000]" };
-    return { score: 10, label: t("minimal"), color: "text-[#5DB85D]" };
+    if (!latestAlert) return { score: 0, label: t("minimal"), color: "text-[#5DB85D]" };
+    
+    // Safely parse the score from the backend
+    const score = latestAlert.threat_score || 0;
+    
+    if (latestAlert.threat_level === "CRITICAL") return { score: score, label: t("critical"), color: "text-[#FF6B6B]" };
+    if (latestAlert.threat_level === "LOW") return { score: score, label: t("low"), color: "text-[#F6C000]" };
+    return { score: score, label: t("minimal"), color: "text-[#5DB85D]" };
   };
 
   const getRecommendedAction = () => {
@@ -232,7 +237,8 @@ export default function App() {
 
             <div className="absolute top-4 right-4 bg-[#EDE8DD]/90 border border-[#C4BDB0] px-3 py-1.5 rounded-lg">
               <span className="text-sm text-[#2D2A26] font-medium">
-                {t("spotted")}: {threatLevel === "CRITICAL" ? t("strayCattle") : threatLevel === "LOW" ? t("smallAnimal") : t("noDetection")}
+                {/* 👇 Dynamic Animal Type Label */}
+                {t("spotted")}: {latestAlert && latestAlert.animal_type ? latestAlert.animal_type.charAt(0).toUpperCase() + latestAlert.animal_type.slice(1) : t("noDetection")}
               </span>
             </div>
 

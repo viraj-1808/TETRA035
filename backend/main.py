@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from fastapi.staticfiles import StaticFiles
 import requests  # <-- NEW: Needed to send the Telegram message
 import os
 from dotenv import load_dotenv
@@ -26,6 +27,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 👇 NEW: Create the static directory if it doesn't exist and mount it
+os.makedirs("static", exist_ok=True)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Dependency to get a database session per request
 def get_db():
@@ -75,7 +80,9 @@ def get_recent_events(limit: int = 10, db: Session = Depends(get_db)):
             "timestamp": alert.timestamp,
             "threat_level": alert.threat_level,
             "reasoning": alert.reasoning,
-            "image_path": alert.image_path
+            "image_path": alert.image_path,
+            "threat_score": alert.threat_score,  # <-- NEW
+            "animal_type": alert.animal_type
         } 
         for alert in alerts
     ]

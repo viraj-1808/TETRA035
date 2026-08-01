@@ -1,6 +1,7 @@
 
-from sqlalchemy import Column, String, create_engine
+from sqlalchemy import Column, String, create_engine, Integer
 from sqlalchemy.orm import declarative_base, sessionmaker
+
 
 # SQLite local database file
 DATABASE_URL = "sqlite:///./data/farm_guard.db"
@@ -20,6 +21,8 @@ class DBAlert(Base):
     threat_level = Column(String)
     reasoning = Column(String)
     image_path = Column(String)
+    threat_score = Column(Integer, default=0)       
+    animal_type = Column(String, nullable=True)
 
 # Automatically create the table on startup if it doesn't exist
 Base.metadata.create_all(bind=engine)
