@@ -1,6 +1,7 @@
 # backend/src/detection/yolo_detector.py
 import os
 import sys
+import time
 from datetime import datetime, timezone
 from typing import Optional, Set
 import cv2
@@ -100,10 +101,17 @@ if __name__ == "__main__":
     detector = AnimalDetector()
     cap = cv2.VideoCapture(video_path)
     
+    fps_video = cap.get(cv2.CAP_PROP_FPS)
+    if not fps_video or fps_video <= 0:
+        fps_video = 30.0
+    frame_count = 0
+    last_log_time = -10.0
+    
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break
+        frame_count += 1
             
         # 1. Run inference
         result = detector.detect(frame)
@@ -118,8 +126,11 @@ if __name__ == "__main__":
             cv2.putText(frame, label_text, (x1, y1 - 10), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         
-        # 3. Print the Pydantic JSON to console to verify the contract
-        print(result.model_dump_json(indent=2))
+        # 3. Print the Pydantic JSON to console (throttled to 1 log per 1.0 sec of video)
+        video_time = frame_count / fps_video
+        if video_time - last_log_time >= 1.0:
+            last_log_time = video_time
+            print(result.model_dump_json(indent=2))
         
         cv2.imshow("YOLO Test", frame)
         if cv2.waitKey(30) & 0xFF == ord('q'):
