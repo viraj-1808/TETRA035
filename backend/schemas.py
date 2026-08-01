@@ -15,6 +15,13 @@ class DetectionResult(BaseModel):
     detections: List[Detection]
 
 
+class ThreatAssessment(BaseModel):
+    threat_level: str
+    threat_score: int = 0
+    reasoning: str = ""
+    detected_animal: Optional[str] = None
+
+
 # BoundingBox & aliases for complete architecture compatibility
 class BoundingBox(BaseModel):
     x_min: float = Field(..., description="Minimum X coordinate (left boundary)")

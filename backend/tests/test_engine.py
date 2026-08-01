@@ -69,10 +69,45 @@ def run_tests():
     for i in range(3):
         assessment = analyzer.analyze({"detections": []})
         print(f"Tick {i+1} - Assessment: {assessment}")
+
+    # Test Case 6: Pydantic Model Integration (evaluate -> select_action)
+    print("\n--- Test Case 6: Pydantic Model Integration (evaluate -> select_action) ---")
+    time.sleep(2.1)
+    cow_frame = {
+        "detections": [
+            {"label": "cow", "confidence": 0.95, "bbox": [100, 100, 800, 800]}
+        ]
+    }
+    pydantic_assessment = analyzer.evaluate(cow_frame)
+    pydantic_action = selector.select_action(pydantic_assessment)
+    print(f"Pydantic Assessment Type: {type(pydantic_assessment)}")
+    print(f"Pydantic Assessment:      {pydantic_assessment}")
+    print(f"Pydantic Action Payload:  {pydantic_action}\n")
+
+    # Test Case 7: LOW Threat Severity & Soft Deterrent
+    print("--- Test Case 7: LOW Threat Severity (Soft Deterrent) ---")
+    analyzer.reset()
+    dog_frame = {
+        "detections": [
+            {"label": "dog", "confidence": 0.85, "bbox": [100, 100, 200, 200]}  # Score ~ 49 (LOW)
+        ]
+    }
+    low_assessment = analyzer.analyze(dog_frame)
+    low_action = selector.select_action(low_assessment)
+    print(f"LOW Assessment:     {low_assessment}")
+    print(f"LOW Action Payload: {low_action}\n")
+
+    # Test Case 8: FIELD CLEARED Event After Absence (15s threshold simulation)
+    print("--- Test Case 8: FIELD CLEARED Event After Absence ---")
+    analyzer.last_seen_time = time.time() - 16.0  # Simulate 16 seconds since last animal seen
+    cleared_assessment = analyzer.analyze({"detections": []})
+    cleared_action = selector.select_action(cleared_assessment)
+    print(f"Cleared Assessment:     {cleared_assessment}")
+    print(f"Cleared Action Payload: {cleared_action}")
     
     print("\n==============================================")
     print("   ALL TEST CASES EXECUTED SUCCESSFULLY       ")
     print("==============================================\n")
 
 if __name__ == "__main__":
-    run_tests()
+    run_tests()
