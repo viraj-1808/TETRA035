@@ -1,6 +1,6 @@
 # backend/schemas.py
 from pydantic import BaseModel, Field
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional,any
 from datetime import datetime, timezone
 
 
@@ -38,3 +38,19 @@ class ThreatEvent(BaseModel):
     vector: Tuple[float, float] = Field(default=(0.0, 0.0), description="Movement direction vector (dx, dy)")
     snapshot_path: Optional[str] = Field(default=None, description="File path to saved snapshot frame")
     requires_alert: bool = Field(default=False, description="Whether notification alert should be triggered")
+
+# ---------------------------------------------------------
+# API Endpoints & Database Schemas (Backend Module)
+# ---------------------------------------------------------
+
+class Alert(BaseModel):
+    alert_id: str
+    timestamp: str
+    threat_level: str
+    reasoning: str
+    image_path: Optional[str] = None
+
+class APIResponse(BaseModel):
+    status: str
+    message: Optional[str] = None
+    data: Optional[Any] = None
