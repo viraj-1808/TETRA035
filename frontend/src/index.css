@@ -5,16 +5,16 @@
 @layer base {
   * {
     scrollbar-width: thin;
-    scrollbar-color: #4E6530 #20331B;
+    scrollbar-color: #9bf09d #EDE8DD;
   }
   *::-webkit-scrollbar {
     width: 6px;
   }
   *::-webkit-scrollbar-track {
-    background: #20331B;
+    background: #EDE8DD;
   }
   *::-webkit-scrollbar-thumb {
-    background: #4E6530;
+    background: #9bf09d;
     border-radius: 8px;
   }
 }
