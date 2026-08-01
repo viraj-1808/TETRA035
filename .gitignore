@@ -1,1 +1,32 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# YOLO models & weights
+*.pt
+*.onnx
+runs/
+
+# SQLite & Logs
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Frontend & Node
+node_modules/
+dist/
+.env.local
+
+# OS metadata
+.DS_Store
+Thumbs.db
