@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #1e2922 #0b0f0c;
+    }
+
+    *::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: #0b0f0c;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background: #1e2922;
+        border-radius: 0;
+    }
+}
+
+@keyframes scanline {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100vh);
+    }
+}
+
+@keyframes bracketPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}
+
+@keyframes ledBlink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.scanline-overlay {
+    position: relative;
+    overflow: hidden;
+}
+
+.scanline-overlay::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 102, 0.15), transparent);
+    animation: scanline 4s linear infinite;
+    pointer-events: none;
+}
+
+.corner-reticle {
+    position: relative;
+}
+
+.corner-reticle::before,
+.corner-reticle::after {
+    content: "+";
+    position: absolute;
+    font-family: monospace;
+    font-size: 10px;
+    color: #00ff66;
+    opacity: 0.6;
+}
+
+.grid-bg {
+    background-image:
+        linear-gradient(rgba(0, 255, 102, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 102, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+.tactical-border {
+    border: 1px solid #1e2922;
+    border-radius: 0;
+}
+
+.tactical-panel {
+    background-color: #121814;
+    border: 1px solid #1e2922;
+    border-radius: 0;
+}
+
+.led-block {
+    transition: all 0.15s ease;
+}
+
+.led-block.active-critical {
+    animation: ledBlink 0.6s ease-in-out infinite;
+}
+
+.terminal-text {
+    font-family: monospace;
+    font-size: 11px;
+    color: #c8d4cc;
+    line-height: 1.6;
+}
+
+.terminal-header {
+    font-family: monospace;
+    font-size: 9px;
+    color: #00ff66;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
