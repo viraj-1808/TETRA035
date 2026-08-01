@@ -1,6 +1,6 @@
 # backend/schemas.py
 from pydantic import BaseModel, Field
-from typing import List, Tuple, Optional,any
+from typing import List, Tuple, Optional, Any
 from datetime import datetime, timezone
 
 
