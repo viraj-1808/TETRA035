@@ -3,7 +3,10 @@ from sqlalchemy import Column, String, create_engine, Integer
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 
+import os
+
 # SQLite local database file
+os.makedirs("./data", exist_ok=True)
 DATABASE_URL = "sqlite:///./data/farm_guard.db"
 
 # connect_args={"check_same_thread": False} is a requirement for FastAPI + SQLite

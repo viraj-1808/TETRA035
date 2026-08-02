@@ -57,22 +57,37 @@ def run_integration_pipeline(video_path: str):
         resolved_video_path = video_path
 
     print(f"[SYSTEM] Opening video stream from: {resolved_video_path}")
-    cap = cv2.VideoCapture(resolved_video_path)
+    # OLD CODE
+    # cap = cv2.VideoCapture(resolved_video_path)
+
+    # NEW CODE
+    from camera.ip_stream import IPWebcamStream
+
+    # Use the exact URL shown on your phone app + "/video"
+    CAMERA_URL = [
+        {"id": "Shiv", "url": "http://192.168.29.97:8080/video"},
+        {"id": "Dhruv", "url": "http://100.117.111.60:8080/video"},
+        {"id": "Viraj", "url": "http://100.89.133.45:8080/video"}
+    ]
+    # Defaulting to camera index 0 (Shiv). Change index to switch cameras.
+    selected_cam = CAMERA_URL[0]
+    print(f"[CAMERA] Using camera ID: {selected_cam['id']}")
+    stream = IPWebcamStream(selected_cam["url"])
     
-    fps_video = cap.get(cv2.CAP_PROP_FPS)
-    if not fps_video or fps_video <= 0:
-        fps_video = 30.0
+    fps_video = 30.0
     frame_count = 0
     last_log_time = -10.0
     
     print("[SYSTEM] Pipeline Ready. Starting stream...")
     
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            print("[SYSTEM] Video stream ended.")
-            break
-        frame_count += 1
+    try:
+        while True:
+            ret, frame = stream.read()
+            if not ret or frame is None:
+                print("[WARNING] Frame dropped or network hiccup. Retrying...")
+                time.sleep(0.1)
+                continue
+            frame_count += 1
             
         # STEP 1: Motion Gatekeeper (Saves CPU)
         if not motion_gate.has_motion(frame):
@@ -126,8 +141,11 @@ def run_integration_pipeline(video_path: str):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    cap.release()
-    cv2.destroyAllWindows()
+    except KeyboardInterrupt:
+        print("[SYSTEM] Shutting down...")
+    finally:
+        stream.release()
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
