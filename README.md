@@ -13,9 +13,6 @@ Built during a 36-hour hackathon, Agri-Shield is designed for extreme practicali
 
 ---
 
-## 🚜 The Problem
-Farmers suffer immense crop losses because stray animals (cows, wild boars, dogs) enter fields unnoticed, especially during the night or early morning. Traditional fencing is expensive, and staring at security cameras 24/7 is impossible.
-
 ## 💡 The Solution
 Agri-Shield acts as an untiring digital guard dog.
 
