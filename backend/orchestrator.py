@@ -7,6 +7,7 @@ import uuid
 # 👇 Importing your exact classes
 from detection.yolo_detector import AnimalDetector
 from engine.analyzer import ThreatAnalyzer
+from camera.ip_stream import IPWebcamStream
 
 API_URL = "http://127.0.0.1:8000/api/test-alert"
 
@@ -17,27 +18,33 @@ def run_pipeline():
     detector = AnimalDetector()
     analyzer = ThreatAnalyzer()
     
-    # OLD CODE
-    # cap = cv2.VideoCapture("tests/test_video.mp4")
+    # =========================================================
+    # VIDEO SOURCE SELECTION (Uncomment the option you want to use)
+    # =========================================================
 
-    # NEW CODE
-    from camera.ip_stream import IPWebcamStream
-
-    # Use the exact URL shown on your phone app + "/video"
+    # --- OPTION 1: Live Wi-Fi Camera Feed (IPWebcamStream) [DEFAULT] ---
     CAMERA_URL = [
-        {"id": "Shiv", "url": "http://192.168.29.97:8080/video"},
+        {"id": "Shiv", "url": "http://10.109.96.80:8080/video"},
         {"id": "Dhruv", "url": "http://100.117.111.60:8080/video"},
         {"id": "Viraj", "url": "http://100.89.133.45:8080/video"}
     ]
-    # Defaulting to camera index 0 (Shiv). Change index to switch cameras.
     selected_cam = CAMERA_URL[0]
-    print(f"[CAMERA] Using camera ID: {selected_cam['id']}")
+    print(f"[CAMERA] Using live camera ID: {selected_cam['id']}")
     stream = IPWebcamStream(selected_cam["url"])
+
+    # --- OPTION 2: Offline Recorded Demo Video (test_video.mp4) ---
+    # print("[CAMERA] Using offline demo video: tests/test_video.mp4")
+    # stream = cv2.VideoCapture("tests/test_video.mp4")
+    # =========================================================
 
     try:
         while True:
             ret, frame = stream.read()
             if not ret or frame is None:
+                # If using recorded demo video and it reaches the end, loop back to frame 0
+                if isinstance(stream, cv2.VideoCapture):
+                    stream.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                    continue
                 print("[WARNING] Frame dropped or network hiccup. Retrying...")
                 time.sleep(0.1)
                 continue
