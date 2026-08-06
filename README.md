@@ -25,8 +25,8 @@ Agri-Shield acts as an untiring digital guard dog.
 - **Decides**: A custom Decision Engine calculates bounding box mass and proximity to determine the threat level (e.g., a small dog is LOW, a large cow is CRITICAL).
 - **Alerts**: Flashes a real-time React dashboard and sends a snapshot directly to the farmer's Telegram.
 
-## 🧠 Engineering Highlights (For the Judges)
-- **Threaded Frame Buffer**: Standard OpenCV HTTP streams buffer frames, causing massive AI lag over time. We implemented a custom daemon thread to flush the buffer, guaranteeing 0ms latency for the AI loop.
+## 🧠 Engineering Highlights
+- **Threaded Frame Buffer**: Standard OpenCV HTTP streams buffer frames, causing massive AI lag over time. We implemented a custom daemon thread to flush the buffer, generating approximately 0ms latency for the AI loop.
 - **Motion-Gated Inference**: We do not run YOLOv8 on every frame. A lightweight `cv2.absdiff` motion filter acts as a gatekeeper.
 - **Strict Unidirectional Architecture**: Sub-systems communicate exclusively via predefined Pydantic JSON contracts (`schemas.py`), ensuring zero circular dependencies and allowing parallel team development.
 
@@ -56,7 +56,7 @@ Agri-Shield/
     └── src/                     # Tailwind-styled components & API fetch services
 ```
 
-## 🚀 Getting Started (Run it locally)
+## 🚀 Getting Started ( To Run it locally )
 
 ### 1. Hardware Setup
 - Connect an Android phone and this laptop to the same Wi-Fi network.
